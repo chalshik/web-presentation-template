@@ -1,0 +1,434 @@
+/* ==========================================================================
+   Northbar — one-page contact card.
+   A conventional light layout: white card, clear hierarchy, one primary
+   action. Nothing here should surprise a first-time visitor.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Tokens
+   -------------------------------------------------------------------------- */
+:root {
+  --page: #f2f3f5;
+  --card: #ffffff;
+  --panel: #f5f6f8;
+
+  --ink: #14181b;
+  --ink-muted: #5a6469;
+  --ink-faint: #667179;
+
+  --border: #e4e7ea;
+  --border-strong: #cfd5da;
+
+  /* WhatsApp's own dark green. The bright #25D366 cannot carry white text at
+     this size, this one clears AA comfortably. */
+  --primary: #075e54;
+  --primary-hover: #05463f;
+
+  /* Warm accent, kept for the focus ring and the logo mark only. */
+  --accent: #8a5d22;
+
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04),
+    0 10px 30px rgba(16, 24, 40, 0.07);
+  --shadow-button: 0 1px 2px rgba(16, 24, 40, 0.06);
+
+  --font: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+
+  --radius: 14px;
+  --radius-card: 22px;
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: clamp(0px, 4vw, 48px);
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   Card
+   -------------------------------------------------------------------------- */
+.card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: clamp(20px, 5vw, 32px);
+}
+
+/* Edge to edge on a phone — a floating card with margins wastes the width
+   where it is scarcest. */
+@media (max-width: 520px) {
+  body {
+    padding: 0;
+  }
+
+  .card {
+    border-radius: 0;
+    box-shadow: none;
+    min-height: 100svh;
+    padding: 20px 18px 32px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Product
+   -------------------------------------------------------------------------- */
+.visual {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: clamp(14px, 4vw, 26px);
+  display: flex;
+  justify-content: center;
+}
+
+.visual img {
+  width: min(74%, 290px);
+}
+
+/* --------------------------------------------------------------------------
+   Identity
+   -------------------------------------------------------------------------- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: clamp(20px, 4vw, 26px);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.brand img {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.title {
+  margin: 12px 0 0;
+  font-size: clamp(1.625rem, 5.4vw, 2rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.028em;
+}
+
+.subtitle {
+  margin: 10px 0 0;
+  color: var(--ink-muted);
+  font-size: 1rem;
+}
+
+/* --------------------------------------------------------------------------
+   Actions
+   -------------------------------------------------------------------------- */
+.actions {
+  margin-top: clamp(22px, 4vw, 28px);
+  display: grid;
+  gap: 10px;
+}
+
+/* The one action most people will take, given the weight to match. */
+.primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  min-height: 56px;
+  padding: 0 20px;
+  border-radius: var(--radius);
+  background: var(--primary);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-button);
+  transition: background-color 0.16s ease, transform 0.16s ease;
+}
+
+.primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.primary:active {
+  transform: translateY(0);
+}
+
+.primary svg {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+
+.secondary {
+  display: grid;
+  gap: 10px;
+}
+
+@media (min-width: 460px) {
+  .secondary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.channel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 0.16s ease, background-color 0.16s ease,
+    transform 0.16s ease;
+}
+
+.channel:hover {
+  border-color: var(--border-strong);
+  background: var(--panel);
+  transform: translateY(-1px);
+}
+
+.channel:active {
+  transform: translateY(0);
+}
+
+.channel__icon {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.channel__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.channel__name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.channel__detail {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-faint);
+  overflow-wrap: anywhere;
+}
+
+/* The address doubles as a map link — standard for a local business, and
+   the only thing on the page a visitor might want to open elsewhere. */
+.detail a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.detail a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink-faint);
+}
+
+/* --------------------------------------------------------------------------
+   Address and hours
+   -------------------------------------------------------------------------- */
+.details {
+  margin-top: clamp(22px, 4vw, 28px);
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  gap: 10px;
+}
+
+.detail {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-size: 0.9375rem;
+  color: var(--ink-muted);
+}
+
+.detail svg {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  fill: none;
+  stroke: var(--ink-faint);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.detail strong {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Entrance — one choreographed sequence on load, then the page sits still.
+   CSS only, so there is no script to fail and nothing to wait for.
+   Order: panel, wordmark, headline, subtitle, then the actions cascade.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .rise {
+    animation: rise 0.62s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i, 0) * 70ms) both;
+  }
+
+  /* The wordmark settles in from wider tracking — the letters close up into
+     place rather than just appearing. */
+  .brand {
+    animation: brand-in 0.85s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i, 0) * 70ms) both;
+  }
+
+  /* The headline resolves out of a blur, which reads as a title card. */
+  .title {
+    animation: title-in 0.8s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i, 0) * 70ms) both;
+  }
+
+  /* Scale for the entrance, translate for the drift, so the two animations
+     never contend for the same property. */
+  .visual img {
+    animation: machine-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 60ms both,
+      drift 7s ease-in-out 1.3s infinite;
+  }
+
+  /* One quiet ring, once, to land the eye on the action that matters. */
+  .primary.rise {
+    animation: rise 0.62s cubic-bezier(0.22, 1, 0.36, 1)
+        calc(var(--i, 0) * 70ms) both,
+      cta-pulse 1.9s ease-out 1.45s 1;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes brand-in {
+  from {
+    opacity: 0;
+    translate: 0 12px;
+    letter-spacing: 0.36em;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    letter-spacing: 0.13em;
+  }
+}
+
+@keyframes title-in {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    filter: blur(0);
+  }
+}
+
+@keyframes machine-in {
+  from {
+    opacity: 0;
+    scale: 0.9;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@keyframes cta-pulse {
+  0% {
+    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0.38);
+  }
+  70% {
+    box-shadow: var(--shadow-button), 0 0 0 15px rgba(7, 94, 84, 0);
+  }
+  100% {
+    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .channel {
+    transition: none;
+  }
+  .primary:hover,
+  .channel:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Focus
+   -------------------------------------------------------------------------- */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
