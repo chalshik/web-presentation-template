@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="1200" height="460" role="img" aria-label="Illustrated locator map: the Alaiku valley in the Kara-Kulja district of Osh region, southern Kyrgyzstan">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbf7ef"/><stop offset="100%" stop-color="#f0e6d4"/>
+    </linearGradient>
+    <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a98f63"/><stop offset="100%" stop-color="#8f7749"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="460" fill="url(#sky)"/>
+  <circle cx="990" cy="108" r="46" fill="#e8b968" opacity="0.5"/>
+
+  <polygon points="0,165 86,245 171,259 257,233 343,147 429,116 514,148 600,171 686,206 771,218 857,213 943,154 1029,115 1114,120 1200,158 1200,460 0,460"  fill="#d9cdb6"/>
+  <polygon points="429,116 403,146 419,138 433,148 447,136 457,146" fill="#ffffff" opacity="0.72"/><polygon points="1029,115 1003,145 1019,137 1033,147 1047,135 1057,145" fill="#ffffff" opacity="0.72"/>
+  <polygon points="0,299 109,275 218,217 327,237 436,288 545,293 655,237 764,205 873,209 982,271 1091,322 1200,273 1200,460 0,460"  fill="#bfae90"/>
+  <polygon points="0,310 133,324 267,386 400,353 533,279 667,353 800,363 933,318 1067,313 1200,364 1200,460 0,460" fill="url(#fg)"/>
+
+  <g><rect x="418" y="372" width="30" height="24" rx="3" fill="#a9762f"/><rect x="415" y="365" width="36" height="9" rx="2.5" fill="#7d5320"/><rect x="423" y="381" width="20" height="3" rx="1.5" fill="#7d5320" opacity="0.6"/></g><g><rect x="460" y="378" width="30" height="24" rx="3" fill="#a9762f"/><rect x="457" y="371" width="36" height="9" rx="2.5" fill="#7d5320"/><rect x="465" y="387" width="20" height="3" rx="1.5" fill="#7d5320" opacity="0.6"/></g><g><rect x="502" y="372" width="30" height="24" rx="3" fill="#a9762f"/><rect x="499" y="365" width="36" height="9" rx="2.5" fill="#7d5320"/><rect x="507" y="381" width="20" height="3" rx="1.5" fill="#7d5320" opacity="0.6"/></g>
+
+  <!-- origin marker -->
+  <g>
+    <ellipse cx="470" cy="312" rx="17" ry="5" fill="#1c1a17" opacity="0.18"/>
+    <path d="M470 308 C440 270 444 244 470 244 C496 244 500 270 470 308 Z"
+          fill="#b0710f" stroke="#ffffff" stroke-width="3.5"/>
+    <circle cx="470" cy="264" r="8.5" fill="#ffffff"/>
+  </g>
+
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+    <text x="44" y="82" fill="#1c1a17" font-size="40" font-weight="800" letter-spacing="-0.5">Alaiku valley</text>
+    <text x="44" y="116" fill="#5c5142" font-size="21" font-weight="600">Kara-Kulja district &#183; Osh region &#183; Kyrgyzstan</text>
+  </g>
+</svg>

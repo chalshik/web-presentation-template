@@ -4,3 +4,8 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
+
+# Source media stays local — 21MB the site never serves. The index that
+# explains what each file is stays tracked.
+honey_assets/*
+!honey_assets/CONTENTS.md
