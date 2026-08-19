@@ -38,25 +38,46 @@
              hero  : 3:2 landscape, 1200x800 or larger
              strip : square, 600x600 or larger
            ============================================================== -->
-      <img
-        class="hero"
-        src="assets/hero.jpg"
-        width="1182"
-        height="788"
-        alt="Frames of capped honeycomb covered in bees, inside one of our hives"
-      />
+      <header class="hero">
+        <div class="hero__track" id="track">
+          <figure class="slide">
+            <video src="assets/clip-1.mp4" poster="assets/clip-1.jpg" muted
+                   playsinline autoplay preload="metadata"
+                   aria-label="Comb frames lifted from one of our hives"></video>
+            <figcaption>Comb, straight from the hive</figcaption>
+          </figure>
+          <figure class="slide">
+            <video src="assets/clip-2.mp4" poster="assets/clip-2.jpg" muted
+                   playsinline preload="none"
+                   aria-label="Honey straining through a sieve into a bucket"></video>
+            <figcaption>Straining, the day it comes off</figcaption>
+          </figure>
+          <figure class="slide">
+            <video src="assets/clip-3.mp4" poster="assets/clip-3.jpg" muted
+                   playsinline preload="none"
+                   aria-label="Buckets of this season's honey in store"></video>
+            <figcaption>This season, in store</figcaption>
+          </figure>
+        </div>
+        <div class="dots" aria-label="Choose a clip">
+          <button class="dot is-on" type="button" aria-label="Clip 1"></button>
+          <button class="dot" type="button" aria-label="Clip 2"></button>
+          <button class="dot" type="button" aria-label="Clip 3"></button>
+        </div>
+      </header>
 
-      <div class="brand" style="--i: 1">
+      <div class="sheet">
+      <div class="brand" style="--i: 0">
         <img src="assets/mark.svg" alt="" width="30" height="30" />
         <span>Alaiku Honey</span>
       </div>
 
-      <h1 class="title" style="--i: 2">Raw honey, straight from our hives</h1>
+      <h1 class="title" style="--i: 1">Raw honey from our own hives</h1>
 
-      <p class="subtitle rise" style="--i: 3">
-        Unfiltered and unpasteurised, from our hives in the Alaiku valley &mdash;
-        Kara-Kulja district, Osh region. Collect in Bishkek, or message us to
-        ask what is in stock and what it costs.
+      <p class="subtitle rise" style="--i: 2">
+        Unfiltered and unpasteurised, from the Alaiku valley &mdash; Kara-Kulja
+        district, Osh region. Collect in Bishkek, or message us to ask what is
+        in stock this season.
       </p>
 
       <!-- ==============================================================
@@ -75,7 +96,7 @@
       <div class="actions">
         <a
           class="primary rise"
-          style="--i: 4"
+          style="--i: 3"
           href="https://wa.me/996773160307?text=Hello%21%20I%27d%20like%20to%20order%20some%20honey."
           target="_blank"
           rel="noopener noreferrer"
@@ -90,7 +111,7 @@
         <div class="secondary">
           <a
             class="channel rise"
-            style="--i: 5"
+            style="--i: 4"
             href="https://t.me/chigurick"
             target="_blank"
             rel="noopener noreferrer"
@@ -107,7 +128,7 @@
 
           <a
             class="channel rise"
-            style="--i: 6"
+            style="--i: 5"
             href="tel:+996773160307"
             aria-label="Call us on +996 773 160 307"
           >
@@ -122,7 +143,7 @@
 
           <a
             class="channel rise"
-            style="--i: 7"
+            style="--i: 6"
             href="https://instagram.com/chigurick"
             target="_blank"
             rel="noopener noreferrer"
@@ -139,26 +160,17 @@
         </div>
       </div>
 
-      <div class="strip rise" style="--i: 8">
-        <img src="assets/photo-1.jpg" width="360" height="360" loading="lazy"
-             alt="Bees on fresh honeycomb" />
-        <img src="assets/photo-2.jpg" width="360" height="360" loading="lazy"
-             alt="Honey straining into a bucket at harvest" />
-        <img src="assets/photo-3.jpg" width="360" height="360" loading="lazy"
-             alt="Buckets of this season&#39;s honey" />
-      </div>
-
       <img
         class="origin rise"
-        style="--i: 9"
+        style="--i: 7"
         src="assets/origin.svg"
         width="1200"
-        height="460"
+        height="745"
         loading="lazy"
-        alt="Illustrated locator: the Alaiku valley in Kara-Kulja district, Osh region, southern Kyrgyzstan"
+        alt="Topographic map of the Kara-Kulja district in Osh region, Kyrgyzstan, with the Alaiku area marked"
       />
 
-      <div class="details rise" style="--i: 10">
+      <div class="details rise" style="--i: 8">
         <p class="detail">
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" />
@@ -178,9 +190,11 @@
             <circle cx="12" cy="12" r="9" />
             <path d="M12 7v5l3.5 2" />
           </svg>
-          <span>Mon&ndash;Sat, 09:00&ndash;19:00</span>
+          <span>Monday to Saturday, 9:00 to 19:00</span>
         </p>
       </div>
+      </div>
     </main>
+    <script src="app.js"></script>
   </body>
 </html>

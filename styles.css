@@ -29,6 +29,11 @@
      the two never compete for the same job. */
   --primary: #075e54;
   --primary-hover: #05463f;
+  /* Soft fill, dark-green label. Same contrast discipline as before, just
+     inverted — 6.4:1 — and it sits far better in a warm light palette. */
+  --primary-soft: #dcefdc;
+  --primary-soft-hover: #cde7ce;
+  --primary-edge: #b7d9ba;
 
   --shadow-card: 0 1px 2px rgba(28, 26, 23, 0.04),
     0 10px 30px rgba(28, 26, 23, 0.07);
@@ -84,7 +89,10 @@ img {
   background: var(--card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  padding: clamp(20px, 5vw, 32px);
+  /* No padding here any more — the hero runs edge to edge and the sheet below
+     carries the inset. `clip` keeps the hero's corners rounded without
+     breaking position:sticky the way overflow:hidden would. */
+  overflow: clip;
 }
 
 @media (max-width: 520px) {
@@ -96,44 +104,110 @@ img {
     border-radius: 0;
     box-shadow: none;
     min-height: 100svh;
-    padding: 18px 18px 32px;
   }
 }
 
 /* --------------------------------------------------------------------------
-   Photography
+   Hero — the clips, pinned. The sheet below scrolls up over it, so the video
+   stays visible instead of being the first thing lost on scroll.
    -------------------------------------------------------------------------- */
-/* aspect-ratio is declared on the elements as well as the files, so swapping a
-   placeholder for a real photo never shifts the layout while it loads. */
 .hero {
-  width: 100%;
-  aspect-ratio: 3 / 2;
-  object-fit: cover;
-  border-radius: 16px;
-  background: var(--panel);
+  position: sticky;
+  top: 0;
+  z-index: 0;
 }
 
-.origin {
-  width: 100%;
-  aspect-ratio: 1200 / 460;
-  border-radius: 12px;
-  margin-top: clamp(18px, 3vw, 22px);
-  background: var(--panel);
-}
-
-.strip {
+.hero__track {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: clamp(18px, 3vw, 22px);
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-.strip img {
+.hero__track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  position: relative;
+  margin: 0;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.slide video {
+  display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 10px;
   background: var(--panel);
+}
+
+.slide figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  /* The sheet overlaps the hero by 20px, so the caption clears that much
+     plus breathing room, or it gets clipped by the rounded corner. */
+  padding: 40px 18px 40px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: linear-gradient(rgba(20, 16, 10, 0), rgba(20, 16, 10, 0.74));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dots {
+  position: absolute;
+  right: 18px;
+  bottom: 42px;
+  display: flex;
+  gap: 14px;
+}
+
+.dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.dot.is-on {
+  width: 22px;
+  background: #ffffff;
+}
+
+/* A 9px dot is not a usable tap target; this enlarges the hit area to 44px
+   tall without changing anything visible. */
+.dot::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  right: -7px;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+
+/* --------------------------------------------------------------------------
+   Sheet — everything below the hero, sliding over it as you scroll
+   -------------------------------------------------------------------------- */
+.sheet {
+  position: relative;
+  z-index: 1;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  margin-top: -20px;
+  padding: clamp(20px, 5vw, 32px);
+  padding-bottom: clamp(28px, 6vw, 40px);
 }
 
 /* --------------------------------------------------------------------------
@@ -143,7 +217,7 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: clamp(18px, 4vw, 24px);
+  margin-top: 2px;
   font-size: 0.8125rem;
   font-weight: 800;
   letter-spacing: 0.13em;
@@ -188,18 +262,18 @@ img {
   min-height: 56px;
   padding: 0 20px;
   border-radius: var(--radius);
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-edge);
+  color: var(--primary);
   text-decoration: none;
   font-size: 1.0625rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
-  box-shadow: var(--shadow-button);
   transition: background-color 0.16s ease, transform 0.16s ease;
 }
 
 .primary:hover {
-  background: var(--primary-hover);
+  background: var(--primary-soft-hover);
   transform: translateY(-1px);
 }
 
@@ -216,21 +290,19 @@ img {
 
 .secondary {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-}
-
-@media (min-width: 460px) {
-  .secondary {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 .channel {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 0 16px;
+  justify-content: center;
+  text-align: center;
+  gap: 7px;
+  min-height: 104px;
+  padding: 14px 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
@@ -269,7 +341,8 @@ img {
 }
 
 .channel__detail {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
   font-weight: 500;
   color: var(--ink-faint);
   overflow-wrap: anywhere;
@@ -403,13 +476,13 @@ img {
 
 @keyframes cta-pulse {
   0% {
-    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0.38);
+    box-shadow: 0 0 0 0 rgba(7, 94, 84, 0.26);
   }
   70% {
-    box-shadow: var(--shadow-button), 0 0 0 15px rgba(7, 94, 84, 0);
+    box-shadow: 0 0 0 14px rgba(7, 94, 84, 0);
   }
   100% {
-    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0);
+    box-shadow: 0 0 0 0 rgba(7, 94, 84, 0);
   }
 }
 

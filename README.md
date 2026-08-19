@@ -42,63 +42,99 @@ Change a number in three places at once — the `href`, the visible text in
 - **`<title>` and `<meta name="description">`** — what shows in search results
   and when someone shares the link.
 
-## The photographs
+## The hero
 
-All four are real, cut from the material in `honey_assets/`:
+The hero is the three clips, not a photo. They were separate before — a still
+at the top and a slider further down — which meant two media blocks competing
+and a 1413px page. Merging them cut it to **1034px** and put the most
+compelling thing first.
 
 | File | Size | What it is |
 | --- | --- | --- |
-| `hero.jpg` | 1182×788 | Capped comb and bees, centre-cropped 3:2 from the one full-size photo |
-| `photo-1.jpg` | 360×360 | Bees on comb |
-| `photo-2.jpg` | 360×360 | Honey straining into a bucket |
-| `photo-3.jpg` | 360×360 | This season's buckets |
+| `clip-1.mp4` | 360×270, 5.5s | Comb frames lifted from the hive |
+| `clip-2.mp4` | 360×270, 5.0s | Honey straining into a bucket |
+| `clip-3.mp4` | 360×270, 7.0s | This season's buckets, against a shyrdak |
+| `clip-1..3.jpg` | 360×270 | Poster frames |
+| `hero.jpg` | 1182×788 | No longer on the page — kept as the `og:image` for link previews |
 
-The three squares are single frames pulled from video. That works only because
-they display at ~108 CSS px on a phone — a 360px frame is a genuine 3.3×, so
-they stay sharp. Do not reuse them anywhere larger.
+**4:3, not square.** The source is 9:16 phone video, so any landscape crop
+discards a lot; square kept more but pushed the WhatsApp button toward the
+fold. 4:3 is the compromise, and the CTA now sits above the fold on a 375×812
+phone — verified, not assumed.
 
-`pour.mp4` is a 6-second silent loop of the straining shot, 436KB, not yet
-placed on the page. See below for why.
+**Sticky.** The hero is `position: sticky; top: 0` and the sheet below it
+scrolls up over it, so the video stays visible instead of being the first
+thing lost. `.card` uses `overflow: clip` rather than `overflow: hidden` —
+hidden would silently break the sticky.
 
-### The ceiling on all of this
+**It advances itself.** The clips are not looped: each one running to its end
+is what drives the sequence, via the `ended` event, wrapping 3 → 1. A manual
+swipe wins — the scroll handler picks up wherever the visitor landed.
 
-Every video came through WhatsApp at **360×640**, and one photo at 462×1000.
-WhatsApp re-compresses hard on send. The originals on the phone are almost
-certainly 1080p or 4K, and getting them off the device unchanged — AirDrop,
-Google Drive, or email as a *file attachment* rather than a photo — would be a
-far bigger quality jump than any processing here.
+### Weight, and how it is kept down
 
-Until then, the hero video stays off the page: at 360px wide it would display
-across ~536 CSS px, well under 1× density, and look visibly soft next to the
-photo that is there now.
+The clips total 672KB, but opening the page does not cost that:
 
-**The gap worth filling: there is no photo of a jar.** Every asset is hives,
-extraction or bulk buckets. Customers buy a jar, and there is currently no
-picture of one. A few jars on a windowsill with light coming through them would
-do more for sales than anything else on this list.
+- Only **clip 1** carries `autoplay` and `preload="metadata"`; the others are
+  `preload="none"` and are fetched the first time they play. `autoplay`
+  overrides `preload`, which is why it is on one clip only — on all three it
+  silently pulled every file at load.
+- Clip 1 is CRF 32 rather than 28. The bee footage is noisy and compresses
+  badly; at display size the two are indistinguishable and it saved 236KB.
+- Nothing decodes while the hero is off screen, and nothing autoplays at all
+  under `prefers-reduced-motion: reduce` — those visitors get posters and
+  ordinary video controls.
+- Every clip is silent; there is no audio track in the files at all.
 
-When replacing a photo, update the `width` and `height` attributes to the real
-pixel size. The CSS also pins `aspect-ratio` on each slot, so the layout never
-jumps while an image loads.
+### One quirk worth knowing
+
+Browsers restore the scroll position of scrollable elements across a reload,
+which dropped returning visitors into the middle of the sequence. That restore
+lands at an unpredictable moment — later than `load` in Chrome — so `app.js`
+holds the track on clip 1 for a 1600ms settling window and gives up the moment
+the visitor touches it. Auto-advance cannot fire in that window; the shortest
+clip is 5 seconds.
+
+### The quality ceiling
+
+Every source video came through WhatsApp at **360×640**. The clips work at
+their display size, but that is the limit. The originals on the phone are
+almost certainly 1080p or 4K — pulling them off unchanged (AirDrop, Drive, or
+email as a *file attachment*) would let the hero be genuinely sharp.
+
+Still missing: **a photo of a jar.**
 
 ## The origin map
 
-`assets/origin.svg` is a drawn locator, not a real map — stylised mountains, a
-marker, and three hives, in the site's own palette. It makes no claim to
-cartographic accuracy; it says "this honey comes from a mountain valley" and
-names the place in text.
+`assets/origin.svg` is a real topographic map, built from open data and
+rendered to SVG. Nothing is drawn from imagination:
 
-The place is real and was checked: OpenStreetMap's geocoder puts Kara-Kulja at
-40.633, 73.591 and confirms Alaiku sits inside Кара-Кулжа району, Ош облусу.
-Osh city is at 40.517, 72.805 for reference.
+- **Relief** — SRTM 30m elevation, an 8192-point grid over the district
+  (974–4738m), turned into a hillshade lit from the northwest and tinted by
+  altitude. Embedded as a small PNG inside the SVG.
+- **Rivers, roads, settlements, district boundary** — OpenStreetMap, fetched
+  via Overpass: 128 rivers, 303 roads, 79 settlements.
+- **Place names** — OSM `name:en` where it exists, otherwise transliterated
+  from Kyrgyz Cyrillic, so the map matches the language of the page.
+- Labels are placed greedily and any that would collide with another label,
+  the title plate or the marker is dropped. Eight survive.
 
-It is deliberately not a pin on exact coordinates. Naming the valley and
-district tells the provenance story without publishing where the hives
-physically stand. If you would rather show the precise spot, say so and I will
-swap it for a real interactive map — OpenStreetMap has a free keyless embed.
+Projection is equirectangular with a `cos(lat)` correction — fine over this
+extent. The whole thing is one self-contained 188KB file: no tile server, no
+API key, no third-party request at page load, and no usage limits to trip over.
 
-To move the marker, edit `PIN_X` / `PIN_Y` in the SVG's marker group, or ask and
-I will regenerate it.
+### Where the marker sits
+
+OpenStreetMap has **no feature named Alaiku** — no valley, no river. The only
+things carrying the name are two businesses, and the marker sits on one of
+them, the Alaiku Camp at 40.308/74.272, inside Kara-Kulja district.
+
+So treat the marker as *approximate*. If the valley is somewhere else in the
+district, say where and it moves. The district boundary, the terrain and the
+place names around it are all accurate regardless.
+
+To rebuild after changing the extent or labels, re-fetch the elevation grid and
+Overpass features, then re-run the generator.
 
 ## Design notes
 
@@ -110,9 +146,11 @@ Two colours with two separate jobs, so they never compete:
 
 - **Amber `#b0710f`** is the brand — the mark, the name, the focus ring. It is
   never used behind white text, where it would fail contrast.
-- **Dark green `#075e54`** is action. That is WhatsApp's own dark green, not
-  the familiar bright `#25D366`, which cannot carry white label text at this
-  size — it lands near 2:1 against white, while the dark one clears 7:1.
+- **Green is action.** The WhatsApp button is a soft fill `#dcefdc` with a
+  dark green `#075e54` label — 6.4:1, and it sits far better in a warm light
+  palette than a heavy dark slab. The bright `#25D366` is not used as a
+  background anywhere: it cannot carry white label text at this size, landing
+  near 2:1 against white.
 
 Type is Manrope throughout. Colours, spacing and radii are CSS custom
 properties at the top of `styles.css`. Change them there, not further down.
@@ -135,7 +173,8 @@ page still renders in full if the animation never runs.
 
 - Every text colour meets WCAG AA on its background; the tightest is 4.7:1,
   including the white label on the green button.
-- Every button is 56px tall, above the 44px minimum for a comfortable tap.
+- The WhatsApp button is 56px tall and the three channel cards 115px, well
+  above the 44px minimum for a comfortable tap.
 - Every link has a visible amber focus ring. Do not remove the outline without
   replacing it.
 
