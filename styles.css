@@ -349,6 +349,20 @@ img {
 }
 
 /* --------------------------------------------------------------------------
+   Origin map — framed and given its own room. Butted straight up against the
+   channel tiles it read as part of the button row rather than as a picture.
+   -------------------------------------------------------------------------- */
+.origin {
+  width: 100%;
+  margin-top: clamp(22px, 5vw, 30px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  /* The map artwork bleeds to its own edges, so the radius has to clip it. */
+  overflow: clip;
+  background: var(--panel);
+}
+
+/* --------------------------------------------------------------------------
    Address and hours
    -------------------------------------------------------------------------- */
 .details {
