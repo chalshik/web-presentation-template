@@ -1,35 +1,43 @@
 /* ==========================================================================
-   Northbar — one-page contact card.
-   A conventional light layout: white card, clear hierarchy, one primary
-   action. Nothing here should surprise a first-time visitor.
+   One-page contact card for a honey producer.
+   Photo-led: the images carry the product, the interface stays quiet.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    Tokens
    -------------------------------------------------------------------------- */
 :root {
-  --page: #f2f3f5;
+  /* Warm, but kept close to paper rather than the heavy cream every honey
+     brand reaches for. The photographs supply the colour. */
+  --page: #faf8f4;
   --card: #ffffff;
-  --panel: #f5f6f8;
+  --panel: #f4f0e8;
 
-  --ink: #14181b;
-  --ink-muted: #5a6469;
-  --ink-faint: #667179;
+  --ink: #1c1a17;
+  --ink-muted: #6b6154;
+  --ink-faint: #7d7264;
 
-  --border: #e4e7ea;
-  --border-strong: #cfd5da;
+  --border: #e9e3d9;
+  --border-strong: #d3c9b8;
 
-  /* WhatsApp's own dark green. The bright #25D366 cannot carry white text at
-     this size, this one clears AA comfortably. */
+  /* Honey. Used for the mark, labels and the focus ring — never as a large
+     field, and never behind white text. */
+  --amber: #b0710f;
+  --amber-text: #8a5a08;
+
+  /* WhatsApp's own dark green. Actions stay green, the brand stays amber, so
+     the two never compete for the same job. */
   --primary: #075e54;
   --primary-hover: #05463f;
+  /* Soft fill, dark-green label. Same contrast discipline as before, just
+     inverted — 6.4:1 — and it sits far better in a warm light palette. */
+  --primary-soft: #dcefdc;
+  --primary-soft-hover: #cde7ce;
+  --primary-edge: #b7d9ba;
 
-  /* Warm accent, kept for the focus ring and the logo mark only. */
-  --accent: #8a5d22;
-
-  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04),
-    0 10px 30px rgba(16, 24, 40, 0.07);
-  --shadow-button: 0 1px 2px rgba(16, 24, 40, 0.06);
+  --shadow-card: 0 1px 2px rgba(28, 26, 23, 0.04),
+    0 10px 30px rgba(28, 26, 23, 0.07);
+  --shadow-button: 0 1px 2px rgba(28, 26, 23, 0.06);
 
   --font: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
@@ -81,11 +89,12 @@ img {
   background: var(--card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  padding: clamp(20px, 5vw, 32px);
+  /* No padding here any more — the hero runs edge to edge and the sheet below
+     carries the inset. `clip` keeps the hero's corners rounded without
+     breaking position:sticky the way overflow:hidden would. */
+  overflow: clip;
 }
 
-/* Edge to edge on a phone — a floating card with margins wastes the width
-   where it is scarcest. */
 @media (max-width: 520px) {
   body {
     padding: 0;
@@ -95,23 +104,110 @@ img {
     border-radius: 0;
     box-shadow: none;
     min-height: 100svh;
-    padding: 20px 18px 32px;
   }
 }
 
 /* --------------------------------------------------------------------------
-   Product
+   Hero — the clips, pinned. The sheet below scrolls up over it, so the video
+   stays visible instead of being the first thing lost on scroll.
    -------------------------------------------------------------------------- */
-.visual {
-  background: var(--panel);
-  border-radius: 16px;
-  padding: clamp(14px, 4vw, 26px);
-  display: flex;
-  justify-content: center;
+.hero {
+  position: sticky;
+  top: 0;
+  z-index: 0;
 }
 
-.visual img {
-  width: min(74%, 290px);
+.hero__track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hero__track::-webkit-scrollbar {
+  display: none;
+}
+
+.slide {
+  position: relative;
+  margin: 0;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.slide video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--panel);
+}
+
+.slide figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  /* The sheet overlaps the hero by 20px, so the caption clears that much
+     plus breathing room, or it gets clipped by the rounded corner. */
+  padding: 40px 18px 40px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: linear-gradient(rgba(20, 16, 10, 0), rgba(20, 16, 10, 0.74));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.dots {
+  position: absolute;
+  right: 18px;
+  bottom: 42px;
+  display: flex;
+  gap: 14px;
+}
+
+.dot {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.55);
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.dot.is-on {
+  width: 22px;
+  background: #ffffff;
+}
+
+/* A 9px dot is not a usable tap target; this enlarges the hit area to 44px
+   tall without changing anything visible. */
+.dot::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  right: -7px;
+  top: 50%;
+  height: 44px;
+  transform: translateY(-50%);
+}
+
+/* --------------------------------------------------------------------------
+   Sheet — everything below the hero, sliding over it as you scroll
+   -------------------------------------------------------------------------- */
+.sheet {
+  position: relative;
+  z-index: 1;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  margin-top: -20px;
+  padding: clamp(20px, 5vw, 32px);
+  padding-bottom: clamp(28px, 6vw, 40px);
 }
 
 /* --------------------------------------------------------------------------
@@ -121,12 +217,12 @@ img {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: clamp(20px, 4vw, 26px);
+  margin-top: 2px;
   font-size: 0.8125rem;
   font-weight: 800;
   letter-spacing: 0.13em;
   text-transform: uppercase;
-  color: var(--ink-muted);
+  color: var(--amber-text);
 }
 
 .brand img {
@@ -153,12 +249,11 @@ img {
    Actions
    -------------------------------------------------------------------------- */
 .actions {
-  margin-top: clamp(22px, 4vw, 28px);
+  margin-top: clamp(20px, 4vw, 26px);
   display: grid;
   gap: 10px;
 }
 
-/* The one action most people will take, given the weight to match. */
 .primary {
   display: flex;
   align-items: center;
@@ -167,18 +262,18 @@ img {
   min-height: 56px;
   padding: 0 20px;
   border-radius: var(--radius);
-  background: var(--primary);
-  color: #ffffff;
+  background: var(--primary-soft);
+  border: 1px solid var(--primary-edge);
+  color: var(--primary);
   text-decoration: none;
   font-size: 1.0625rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
-  box-shadow: var(--shadow-button);
   transition: background-color 0.16s ease, transform 0.16s ease;
 }
 
 .primary:hover {
-  background: var(--primary-hover);
+  background: var(--primary-soft-hover);
   transform: translateY(-1px);
 }
 
@@ -195,21 +290,19 @@ img {
 
 .secondary {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-}
-
-@media (min-width: 460px) {
-  .secondary {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 .channel {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  min-height: 56px;
-  padding: 0 16px;
+  justify-content: center;
+  text-align: center;
+  gap: 7px;
+  min-height: 104px;
+  padding: 14px 8px;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
@@ -248,30 +341,18 @@ img {
 }
 
 .channel__detail {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
   font-weight: 500;
   color: var(--ink-faint);
   overflow-wrap: anywhere;
-}
-
-/* The address doubles as a map link — standard for a local business, and
-   the only thing on the page a visitor might want to open elsewhere. */
-.detail a {
-  color: inherit;
-  text-decoration: none;
-  border-bottom: 1px solid var(--border-strong);
-}
-
-.detail a:hover {
-  color: var(--ink);
-  border-bottom-color: var(--ink-faint);
 }
 
 /* --------------------------------------------------------------------------
    Address and hours
    -------------------------------------------------------------------------- */
 .details {
-  margin-top: clamp(22px, 4vw, 28px);
+  margin-top: clamp(20px, 4vw, 26px);
   padding-top: 20px;
   border-top: 1px solid var(--border);
   display: grid;
@@ -304,10 +385,19 @@ img {
   font-weight: 700;
 }
 
+.detail a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.detail a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--ink-faint);
+}
+
 /* --------------------------------------------------------------------------
-   Entrance — one choreographed sequence on load, then the page sits still.
-   CSS only, so there is no script to fail and nothing to wait for.
-   Order: panel, wordmark, headline, subtitle, then the actions cascade.
+   Entrance — one sequence on load, CSS only
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: no-preference) {
   .rise {
@@ -315,31 +405,24 @@ img {
       calc(var(--i, 0) * 70ms) both;
   }
 
-  /* The wordmark settles in from wider tracking — the letters close up into
-     place rather than just appearing. */
   .brand {
     animation: brand-in 0.85s cubic-bezier(0.22, 1, 0.36, 1)
       calc(var(--i, 0) * 70ms) both;
   }
 
-  /* The headline resolves out of a blur, which reads as a title card. */
   .title {
     animation: title-in 0.8s cubic-bezier(0.22, 1, 0.36, 1)
       calc(var(--i, 0) * 70ms) both;
   }
 
-  /* Scale for the entrance, translate for the drift, so the two animations
-     never contend for the same property. */
-  .visual img {
-    animation: machine-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 60ms both,
-      drift 7s ease-in-out 1.3s infinite;
+  .hero {
+    animation: hero-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 40ms both;
   }
 
-  /* One quiet ring, once, to land the eye on the action that matters. */
   .primary.rise {
     animation: rise 0.62s cubic-bezier(0.22, 1, 0.36, 1)
         calc(var(--i, 0) * 70ms) both,
-      cta-pulse 1.9s ease-out 1.45s 1;
+      cta-pulse 1.9s ease-out 1.5s 1;
   }
 }
 
@@ -380,10 +463,10 @@ img {
   }
 }
 
-@keyframes machine-in {
+@keyframes hero-in {
   from {
     opacity: 0;
-    scale: 0.9;
+    scale: 1.04;
   }
   to {
     opacity: 1;
@@ -391,25 +474,15 @@ img {
   }
 }
 
-@keyframes drift {
-  0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: 0 -6px;
-  }
-}
-
 @keyframes cta-pulse {
   0% {
-    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0.38);
+    box-shadow: 0 0 0 0 rgba(7, 94, 84, 0.26);
   }
   70% {
-    box-shadow: var(--shadow-button), 0 0 0 15px rgba(7, 94, 84, 0);
+    box-shadow: 0 0 0 14px rgba(7, 94, 84, 0);
   }
   100% {
-    box-shadow: var(--shadow-button), 0 0 0 0 rgba(7, 94, 84, 0);
+    box-shadow: 0 0 0 0 rgba(7, 94, 84, 0);
   }
 }
 
@@ -428,7 +501,7 @@ img {
    Focus
    -------------------------------------------------------------------------- */
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--amber);
   outline-offset: 3px;
   border-radius: 4px;
 }

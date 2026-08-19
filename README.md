@@ -1,23 +1,23 @@
-# Northbar — one-page contact site
+# Alaiku Honey — one-page contact site
 
-A single-page contact card for an espresso equipment supplier in Bishkek. One
-screen: what you do, four ways to reach you, address and hours. A conventional
-light layout — white card, clear hierarchy, one primary action — so nothing on
-it needs explaining to a first-time visitor.
+A single-page contact card for a honey producer in Bishkek. Photo-led: large
+images carry the product, the interface stays out of the way, and every route
+to a conversation sits one tap away.
 
 Plain HTML and CSS. No JavaScript, no build step, no dependencies. Open
 `index.html` and it runs.
 
 ```
-index.html          all markup and copy
-styles.css          tokens, layout, the load animation
-assets/machine.svg  the product illustration
-assets/mark.svg     favicon and logo
+index.html            all markup and copy
+styles.css            tokens, layout, the load sequence
+assets/photo-*.svg    placeholder photos — replace with your own
+assets/mark.svg       favicon and logo
+assets/qr.svg|.png    QR code for the published URL
 ```
 
 ## Your details, and where they live
 
-Everything is in `index.html`, inside the block marked `EDIT THESE`.
+In `index.html`, inside the block marked `EDIT THESE`.
 
 | Channel | Link in the file | Rule |
 | --- | --- | --- |
@@ -27,99 +27,172 @@ Everything is in `index.html`, inside the block marked `EDIT THESE`.
 | Instagram | `https://instagram.com/chigurick` | Profile username. |
 
 The two easy mistakes are opposites: a `+` left in the WhatsApp link breaks it,
-and a `+` missing from `tel:` means people abroad can't dial you. Check both.
+and a `+` missing from `tel:` means people abroad cannot dial you. Check both.
 
-If you change a number or handle, change three things together — the `href`,
-the visible text in `.channel__detail`, and the `aria-label` on the link.
-
-The WhatsApp link carries `?text=…`, which pre-fills the customer's first
-message. Delete that part of the URL if you'd rather they start from a blank
-chat.
+Change a number in three places at once — the `href`, the visible text in
+`.channel__detail`, and the `aria-label`.
 
 ### Everything else to edit
 
-- **Business name** — `Northbar` appears in `.brand`, the `<title>` and the
-  `og:title`. It's a placeholder; use your own.
+- **Business name** — `Alaiku Honey` appears in `.brand`, the `<title>` and
+  the `og:title`. It is a placeholder; use your real name.
 - **Headline and the line under it** — `.title` and `.subtitle`.
-- **Address and hours** — `.details`, currently Tynalieva 12, Bishkek and
-  Mon–Sat 09:00–19:00. The address links to Google Maps; if you move, update
-  the `query=` part of that URL to match.
+- **Address and hours** — `.details`. The address links to Google Maps; update
+  the `query=` part of that URL if you move.
 - **`<title>` and `<meta name="description">`** — what shows in search results
   and when someone shares the link.
 
-## The product image
+## The hero
 
-`assets/machine.svg` is a drawing, and a real photo of a machine you actually
-sell will do more work. Drop yours in as `assets/machine.jpg`, change the `src`
-on `.stage__machine`, and update the `width` and `height` attributes to the
-real pixel size so the page doesn't jump while it loads. It sits in a light grey
-panel, so a shot on a white or light background suits it best.
+The hero is the three clips, not a photo. They were separate before — a still
+at the top and a slider further down — which meant two media blocks competing
+and a 1413px page. Merging them cut it to **1034px** and put the most
+compelling thing first.
+
+| File | Size | What it is |
+| --- | --- | --- |
+| `clip-1.mp4` | 360×270, 5.5s | Comb frames lifted from the hive |
+| `clip-2.mp4` | 360×270, 5.0s | Honey straining into a bucket |
+| `clip-3.mp4` | 360×270, 7.0s | This season's buckets, against a shyrdak |
+| `clip-1..3.jpg` | 360×270 | Poster frames |
+| `hero.jpg` | 1182×788 | No longer on the page — kept as the `og:image` for link previews |
+
+**4:3, not square.** The source is 9:16 phone video, so any landscape crop
+discards a lot; square kept more but pushed the WhatsApp button toward the
+fold. 4:3 is the compromise, and the CTA now sits above the fold on a 375×812
+phone — verified, not assumed.
+
+**Sticky.** The hero is `position: sticky; top: 0` and the sheet below it
+scrolls up over it, so the video stays visible instead of being the first
+thing lost. `.card` uses `overflow: clip` rather than `overflow: hidden` —
+hidden would silently break the sticky.
+
+**It advances itself.** The clips are not looped: each one running to its end
+is what drives the sequence, via the `ended` event, wrapping 3 → 1. A manual
+swipe wins — the scroll handler picks up wherever the visitor landed.
+
+### Weight, and how it is kept down
+
+The clips total 672KB, but opening the page does not cost that:
+
+- Only **clip 1** carries `autoplay` and `preload="metadata"`; the others are
+  `preload="none"` and are fetched the first time they play. `autoplay`
+  overrides `preload`, which is why it is on one clip only — on all three it
+  silently pulled every file at load.
+- Clip 1 is CRF 32 rather than 28. The bee footage is noisy and compresses
+  badly; at display size the two are indistinguishable and it saved 236KB.
+- Nothing decodes while the hero is off screen, and nothing autoplays at all
+  under `prefers-reduced-motion: reduce` — those visitors get posters and
+  ordinary video controls.
+- Every clip is silent; there is no audio track in the files at all.
+
+### One quirk worth knowing
+
+Browsers restore the scroll position of scrollable elements across a reload,
+which dropped returning visitors into the middle of the sequence. That restore
+lands at an unpredictable moment — later than `load` in Chrome — so `app.js`
+holds the track on clip 1 for a 1600ms settling window and gives up the moment
+the visitor touches it. Auto-advance cannot fire in that window; the shortest
+clip is 5 seconds.
+
+### The quality ceiling
+
+Every source video came through WhatsApp at **360×640**. The clips work at
+their display size, but that is the limit. The originals on the phone are
+almost certainly 1080p or 4K — pulling them off unchanged (AirDrop, Drive, or
+email as a *file attachment*) would let the hero be genuinely sharp.
+
+Still missing: **a photo of a jar.**
+
+## The origin map
+
+`assets/origin.svg` is a real topographic map, built from open data and
+rendered to SVG. Nothing is drawn from imagination:
+
+- **Relief** — SRTM 30m elevation, an 8192-point grid over the district
+  (974–4738m), turned into a hillshade lit from the northwest and tinted by
+  altitude. Embedded as a small PNG inside the SVG.
+- **Rivers, roads, settlements, district boundary** — OpenStreetMap, fetched
+  via Overpass: 128 rivers, 303 roads, 79 settlements.
+- **Place names** — OSM `name:en` where it exists, otherwise transliterated
+  from Kyrgyz Cyrillic, so the map matches the language of the page.
+- Labels are placed greedily and any that would collide with another label,
+  the title plate or the marker is dropped. Eight survive.
+
+Projection is equirectangular with a `cos(lat)` correction — fine over this
+extent. The whole thing is one self-contained 188KB file: no tile server, no
+API key, no third-party request at page load, and no usage limits to trip over.
+
+### Where the marker sits
+
+OpenStreetMap has **no feature named Alaiku** — no valley, no river. The only
+things carrying the name are two businesses, and the marker sits on one of
+them, the Alaiku Camp at 40.308/74.272, inside Kara-Kulja district.
+
+So treat the marker as *approximate*. If the valley is somewhere else in the
+district, say where and it moves. The district boundary, the terrain and the
+place names around it are all accurate regardless.
+
+To rebuild after changing the extent or labels, re-fetch the elevation grid and
+Overpass features, then re-run the generator.
 
 ## Design notes
 
-Light and deliberately ordinary: a light grey page, a white card, dark text.
-On phones the card goes edge to edge, since a floating card with margins wastes
-width where it is scarcest.
+Warm and light, because honey is warm and light. The page background sits close
+to paper rather than the heavy cream most honey brands reach for — the
+photographs are meant to supply the colour, not the interface.
 
-The hierarchy is one primary action plus three alternatives. **Message on
-WhatsApp** is the filled green button because it is the one most people will
-use; Telegram, Call and Instagram sit under it as equal outlined buttons. If a
-different channel gets you more business, swap which one is `.primary`.
+Two colours with two separate jobs, so they never compete:
 
-The green is `#075e54`, WhatsApp's own dark green, not the familiar bright
-`#25D366`. The bright green cannot carry white label text at this size — it
-lands around 2:1 against white — while the dark one clears 7:1. The glyph is
-what people recognise anyway.
+- **Amber `#b0710f`** is the brand — the mark, the name, the focus ring. It is
+  never used behind white text, where it would fail contrast.
+- **Green is action.** The WhatsApp button is a soft fill `#dcefdc` with a
+  dark green `#075e54` label — 6.4:1, and it sits far better in a warm light
+  palette than a heavy dark slab. The bright `#25D366` is not used as a
+  background anywhere: it cannot carry white label text at this size, landing
+  near 2:1 against white.
 
-Colours, spacing and radii are CSS custom properties at the top of
-`styles.css`. Change them there, not further down.
+Type is Manrope throughout. Colours, spacing and radii are CSS custom
+properties at the top of `styles.css`. Change them there, not further down.
 
 ## The opening animation
 
-The page plays one short sequence on load, about 1.2 seconds end to end, then
-sits still:
+One sequence on load, about 1.3 seconds, then the page sits still: the hero
+photo settles from a slight zoom, the wordmark closes up from wider
+letter-spacing, the headline resolves out of a blur, then the buttons cascade
+70ms apart and the WhatsApp button gives one soft ring pulse.
 
-1. The product panel rises and the machine scales up into place.
-2. The wordmark settles in from wider letter-spacing — the letters close up
-   rather than just appearing.
-3. The headline resolves out of a blur, like a title card.
-4. The subtitle, then the four buttons, cascade in 70ms apart.
-5. The WhatsApp button gives one soft ring pulse to land the eye on it.
-
-After that the only movement is the machine drifting up and down by 6px on a
-7-second loop.
-
-All of it is CSS — there is no script to fail. To retime the cascade, change
-the `70ms` step in the `.rise` rule in `styles.css`. To reorder it, change the
-`--i` numbers on the elements in `index.html`: they are step positions, 0
-through 8. To remove a piece, delete its rule from the
-`prefers-reduced-motion: no-preference` block.
-
-The whole sequence lives inside that block, so a visitor who has asked their
-system to reduce motion gets the finished page immediately, with no movement at
-all. Nothing that hides content sits outside a `@keyframes` block either, so if
-a browser never runs the animation the page still renders in full.
+All CSS. To retime it, change the `70ms` step in `.rise`. To reorder it, change
+the `--i` numbers in `index.html` — they are step positions. The whole sequence
+sits inside a `prefers-reduced-motion: no-preference` block, so anyone who has
+asked their system to reduce motion gets the finished page with no movement.
+Nothing that hides content lives outside a `@keyframes` block either, so the
+page still renders in full if the animation never runs.
 
 ## Accessibility
 
-Worth keeping if you edit:
-
-- Every text colour meets WCAG AA on its background; the tightest is 5.0:1,
-  and that includes the white label on the green button.
-- Every button is 56px tall, above the 44px minimum for a comfortable tap.
-- Every link has a visible amber focus ring. Don't remove the outline without
+- Every text colour meets WCAG AA on its background; the tightest is 4.7:1,
+  including the white label on the green button.
+- The WhatsApp button is 56px tall and the three channel cards 115px, well
+  above the 44px minimum for a comfortable tap.
+- Every link has a visible amber focus ring. Do not remove the outline without
   replacing it.
-- The opening sequence is pure CSS and respects
-  `prefers-reduced-motion: reduce`; see above.
+
+## The QR code
+
+`assets/qr.svg` (print) and `assets/qr.png` (screen) encode the published
+GitHub Pages URL, at error-correction level Q so a scuffed print still scans.
+Keep the white border — that quiet zone is required.
+
+**It is tied to the current URL.** Renaming the repository or moving to a
+custom domain breaks every printed copy, so settle the address before printing
+anything.
 
 ## Publish it
 
-Push to GitHub, then **Settings → Pages**, set **Source** to *Deploy from a
-branch*, pick `main` and `/ (root)`, save. It goes live at
-`https://<username>.github.io/<repository>/` in about a minute.
-
-Any static host works the same way — drag the folder onto Netlify, or point
-Vercel or Cloudflare Pages at the repo. There is nothing to build.
+Pages is already enabled on `main` / root. Commit, push, and the site rebuilds
+in about a minute at
+`https://chalshik.github.io/web-presentation-template/`. Nothing to build.
 
 ## Local preview
 
