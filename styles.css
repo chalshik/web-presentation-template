@@ -89,9 +89,7 @@ img {
   background: var(--card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
-  /* No padding here any more — the hero runs edge to edge and the sheet below
-     carries the inset. `clip` keeps the hero's corners rounded without
-     breaking position:sticky the way overflow:hidden would. */
+  /* The sheet inside carries the inset; this only has to keep the corners. */
   overflow: clip;
 }
 
@@ -108,13 +106,19 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   Hero — the clips, pinned. The sheet below scrolls up over it, so the video
-   stays visible instead of being the first thing lost on scroll.
+   Hero — the clips. Pinned to the top of the card they read as a bar: a strip
+   of video the sheet slid up over and half covered. They sit in the sheet now,
+   under the sentence that introduces the honey — a whole picture, framed like
+   the map below it, where somebody is already reading.
    -------------------------------------------------------------------------- */
 .hero {
-  position: sticky;
-  top: 0;
-  z-index: 0;
+  position: relative;
+  margin-top: clamp(18px, 4vw, 24px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  /* The video fills its frame edge to edge, so the radius has to clip it. */
+  overflow: clip;
+  background: var(--panel);
 }
 
 .hero__track {
@@ -150,9 +154,9 @@ img {
 .slide figcaption {
   position: absolute;
   inset: auto 0 0;
-  /* The sheet overlaps the hero by 20px, so the caption clears that much
-     plus breathing room, or it gets clipped by the rounded corner. */
-  padding: 40px 18px 40px;
+  /* Nothing overlaps the clip now, so the caption sits where it belongs —
+     on the bottom edge, clear of the dots to its right. */
+  padding: 34px 96px 12px 14px;
   color: #ffffff;
   font-size: 0.875rem;
   font-weight: 700;
@@ -162,8 +166,8 @@ img {
 
 .dots {
   position: absolute;
-  right: 18px;
-  bottom: 42px;
+  right: 14px;
+  bottom: 14px;
   display: flex;
   gap: 14px;
 }
@@ -198,15 +202,12 @@ img {
 }
 
 /* --------------------------------------------------------------------------
-   Sheet — everything below the hero, sliding over it as you scroll
+   Sheet — the card's contents and the inset they sit in
    -------------------------------------------------------------------------- */
 .sheet {
   position: relative;
-  z-index: 1;
   background: var(--card);
-  border-radius: 20px 20px 0 0;
-  margin-top: -20px;
-  padding: clamp(20px, 5vw, 32px);
+  padding: clamp(24px, 5vw, 32px);
   padding-bottom: clamp(28px, 6vw, 40px);
 }
 
@@ -430,7 +431,8 @@ img {
   }
 
   .hero {
-    animation: hero-in 0.95s cubic-bezier(0.22, 1, 0.36, 1) 40ms both;
+    animation: hero-in 0.95s cubic-bezier(0.22, 1, 0.36, 1)
+      calc(var(--i, 0) * 70ms) both;
   }
 
   .primary.rise {
@@ -508,6 +510,27 @@ img {
   .primary:hover,
   .channel:hover {
     transform: none;
+  }
+
+  /* Nothing autoplays here, so each clip carries a native control bar — which
+     lands exactly where the overlaid caption does. Give the caption a row of
+     its own under the clip, and put the dots on it, dark enough to read
+     against the panel now that they are off the picture. */
+  .slide figcaption {
+    position: static;
+    padding: 9px 96px 9px 14px;
+    background: var(--panel);
+    color: var(--ink-muted);
+    font-size: 0.8125rem;
+    text-shadow: none;
+  }
+
+  .dot {
+    background: var(--border-strong);
+  }
+
+  .dot.is-on {
+    background: var(--ink-muted);
   }
 }
 
