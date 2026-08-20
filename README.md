@@ -21,10 +21,14 @@ In `index.html`, inside the block marked `EDIT THESE`.
 
 | Channel | Link in the file | Rule |
 | --- | --- | --- |
-| WhatsApp | `https://wa.me/996773160307` | Digits **only** — country code included, **no `+`**, no spaces or dashes. |
-| Telegram | `https://t.me/chigurick` | Username **without** the `@`. |
-| Phone | `tel:+996773160307` | E.164 — this one **does** keep the leading `+`. |
-| Instagram | `https://instagram.com/chigurick` | Profile username. |
+| WhatsApp | `https://wa.me/996702546222` | Digits **only** — country code included, **no `+`**, no spaces or dashes. |
+| Phone | `tel:+996702546222` | E.164 — this one **does** keep the leading `+`. |
+| Instagram | `https://instagram.com/alaikuubaly` | Profile username. |
+
+The tile row under the WhatsApp button is `grid-auto-flow: column`, so it sizes
+itself to however many tiles are in it. Adding a channel back — Telegram is
+`https://t.me/<username>`, username without the `@` — means copying one
+`.channel` block and giving it the next `--i`. No CSS change either way.
 
 The two easy mistakes are opposites: a `+` left in the WhatsApp link breaks it,
 and a `+` missing from `tel:` means people abroad cannot dial you. Check both.
@@ -37,6 +41,8 @@ Change a number in three places at once — the `href`, the visible text in
 - **Business name** — `Alaiku Honey` appears in `.brand`, the `<title>` and
   the `og:title`. It is a placeholder; use your real name.
 - **Headline and the line under it** — `.title` and `.subtitle`.
+- **The terms label** — `.offer`, the pill between them. Delete the whole
+  `<p>` if you only sell one way.
 - **Address and hours** — `.details`. The address links to Google Maps; update
   the `query=` part of that URL if you move.
 - **`<title>` and `<meta name="description">`** — what shows in search results

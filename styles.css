@@ -240,8 +240,26 @@ img {
   letter-spacing: -0.028em;
 }
 
+/* Amber is allowed here: this is a label, not a field, and the text sits on
+   the warm panel rather than on white. */
+.offer {
+  margin: 11px 0 0;
+  display: inline-block;
+  padding: 5px 11px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--amber-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  line-height: 1.3;
+}
+
 .subtitle {
-  margin: 10px 0 0;
+  /* Tighter than it was: the offer label now carries the gap under the title,
+     and two full-size gaps in a row pushed the clips down the page. */
+  margin: 9px 0 0;
   color: var(--ink-muted);
   font-size: 1rem;
 }
@@ -291,7 +309,10 @@ img {
 
 .secondary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* Sized by how many tiles are actually there, rather than a fixed three —
+     dropping a channel used to leave an empty column behind. */
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 10px;
 }
 
