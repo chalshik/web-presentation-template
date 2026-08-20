@@ -52,9 +52,10 @@ compelling thing first.
 | File | Size | What it is |
 | --- | --- | --- |
 | `clip-1.mp4` | 360×270, 5.5s | Comb frames lifted from the hive |
-| `clip-2.mp4` | 360×270, 5.0s | Honey straining into a bucket |
-| `clip-3.mp4` | 360×270, 7.0s | This season's buckets, against a shyrdak |
-| `clip-1..3.jpg` | 360×270 | Poster frames |
+| `clip-2.mp4` | 360×270, 5.1s | Honey straining through a sieve into a bucket |
+| `clip-3.mp4` | 464×348, 6.3s | Wax cappings cut off a frame with a knife |
+| `clip-1..3.jpg` | matching each clip | Poster frames — first frame of each |
+| `valley-1..2.jpg` | 520×520 | The Alay range, in a band under the map |
 | `hero.jpg` | 1182×788 | No longer on the page — kept as the `og:image` for link previews |
 
 **4:3, not square.** The source is 9:16 phone video, so any landscape crop
@@ -73,14 +74,15 @@ swipe wins — the scroll handler picks up wherever the visitor landed.
 
 ### Weight, and how it is kept down
 
-The clips total 672KB, but opening the page does not cost that:
+The clips total 936KB, but opening the page does not cost that:
 
 - Only **clip 1** carries `autoplay` and `preload="metadata"`; the others are
   `preload="none"` and are fetched the first time they play. `autoplay`
   overrides `preload`, which is why it is on one clip only — on all three it
   silently pulled every file at load.
-- Clip 1 is CRF 32 rather than 28. The bee footage is noisy and compresses
-  badly; at display size the two are indistinguishable and it saved 236KB.
+- All three are CRF 29 after a denoise pass (`hqdn3d`), which is what makes
+  that bitrate hold up: WhatsApp's noise is expensive to encode, so removing
+  it first buys back most of what the grade and the sharpen cost.
 - Nothing decodes while the hero is off screen, and nothing autoplays at all
   under `prefers-reduced-motion: reduce` — those visitors get posters and
   ordinary video controls.
@@ -92,17 +94,45 @@ Browsers restore the scroll position of scrollable elements across a reload,
 which dropped returning visitors into the middle of the sequence. That restore
 lands at an unpredictable moment — later than `load` in Chrome — so `app.js`
 holds the track on clip 1 for a 1600ms settling window and gives up the moment
-the visitor touches it. Auto-advance cannot fire in that window; the shortest
-clip is 5 seconds.
+the visitor touches it. Auto-advance cannot fire in that window: clip 1 is the
+only one that autoplays at load, and it runs 5.5 seconds.
+
+### The grade
+
+All three clips and `hero.jpg` run through the same pass: `hqdn3d` to take out
+WhatsApp's blocking, a small warm push and a saturation lift so the honey reads
+as honey, then a light `unsharp`. The exact chain is in `honey_assets/CONTENTS.md`
+so it can be re-run when better source arrives. It is a cosmetic pass — it
+cannot put back detail that was never in the file.
 
 ### The quality ceiling
 
-Every source video came through WhatsApp at **360×640**. The clips work at
-their display size, but that is the limit. The originals on the phone are
-almost certainly 1080p or 4K — pulling them off unchanged (AirDrop, Drive, or
-email as a *file attachment*) would let the hero be genuinely sharp.
+Most source video came through WhatsApp at **360×640**; the newer batch made it
+through at 464×832, which is why clip 3 is the sharpest of the three. The comb
+close-up from that batch is unused: at 0.9 seconds it is too short to hold a
+slot, and slowing it to fit read as slow motion rather than as a clip. The clips
+work at their display size, but that is the limit. The originals on the phone
+are almost certainly 1080p or 4K — pulling them off unchanged (AirDrop, Drive,
+or email as a *file attachment*) would let the hero be genuinely sharp.
 
 Still missing: **a photo of a jar.**
+
+## The valley band
+
+Two square photos sit directly under the map, tight to it: the map says where
+the honey comes from, the photos say what that place looks like. A wide gap
+made them read as two unrelated blocks, so the margin is deliberately smaller
+than the one above the map.
+
+They are square because the map is already wide — a landscape pair under it
+made the page bottom-heavy — and because both sources are landscape, so 1:1
+crops rather than upscales. `object-fit: cover` does the cropping, which means
+swapping in different photos needs no code change.
+
+**These two are placeholders.** They came in as Safari downloads with no camera
+EXIF and no established licence, and a third one in the same batch carries a
+visible photographer's credit. `honey_assets/CONTENTS.md` records what is known
+about each. Photographs of the actual valley would replace them one-for-one.
 
 ## The origin map
 
