@@ -364,6 +364,30 @@ img {
 }
 
 /* --------------------------------------------------------------------------
+   The valley — two photos directly under the map. They sit tight to it on
+   purpose: the map says where, these say what it looks like, and a wide gap
+   would break them into two unrelated things.
+   -------------------------------------------------------------------------- */
+.valley {
+  margin-top: clamp(9px, 2vw, 12px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(9px, 2vw, 12px);
+}
+
+.valley img {
+  display: block;
+  width: 100%;
+  /* Square keeps the band shallow under an already-wide map, and both
+     sources are landscape, so this crops rather than upscales. */
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+/* --------------------------------------------------------------------------
    Address and hours
    -------------------------------------------------------------------------- */
 .details {
